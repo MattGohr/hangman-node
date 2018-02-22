@@ -1,21 +1,12 @@
 var inquirer = require('inquirer');
 
+var prompt = inquirer.createPromptModule();
+
 
 //create player array: you can add as many words to the list as you want.
 var words = ["dhalsim", "ryu", "guile", "akuma", "sagat"];
 
 //wins
-var wins = document.getElementById("wins");
-
-//change innter html to number
-// var wins.innerHTML
-
-//words guessed
-var guessWord = document.getElementById("guess-word-placeholder");
-
-//letters guessed
-var lettersGuessed = document.getElementById("letters-guessed");
-
 //random word in array index
 var randWord = Math.floor(Math.random() * words.length) + 0;
 // var randWord = 3;
@@ -27,16 +18,12 @@ var hangManViewWord = [];
 var guessLeft = 15;
 
 //incorrect guesses
-var incorrectLetters = "",correctLetters = "", letterBank = "";
+var incorrectLetters = "",
+  correctLetters = "",
+  letterBank = "";
 
 //wins
 var wins = 0;
-
-//divs
-var hangeManDiv = document.getElementById("hangman-word-placeholder");
-var correctGuessDiv = document.getElementById("letters-guessed");
-var guessCountDiv = document.getElementById("guesses-remaining");
-
 
 //hide hangman word
 function hideHangman() {
@@ -51,8 +38,7 @@ function hideHangman() {
 
   }
 
-  //insert into html
-  hangeManDiv.innerHTML = combineArraySameLine(hangManViewWord);
+  console.log(combineArraySameLine(hangManViewWord));
 
 }
 
@@ -82,9 +68,7 @@ function reWriteHangMan(letterGuessed) {
 
     if (x >= 0) {
       //skip
-    }
-
-    else {
+    } else {
 
       var placeholderWord = words[randWord]
 
@@ -107,105 +91,115 @@ function reWriteHangMan(letterGuessed) {
 hideHangman();
 
 //WHEN KEY IS PRESSED -------------------------------------------------------------------
-document.onkeyup = function(event) {
+function askUser() {
+  inquirer
+    .prompt([
+      // Here we create a basic text prompt.
+      {
+        type: "input",
+        message: "Guess a letter:",
+        name: "letter"
+      },
+    ]).then(function(response) {
 
-  // Captures the key press, converts it to lowercase, and saves it to a variable.
-  var letter = String.fromCharCode(event.keyCode).toLowerCase();
+      // Captures the key press, converts it to lowercase, and saves it to a variable.
+      var letter = response.letter.toLowerCase();
+      console.log("letter is: " + letter);
 
-  //console.log("letter: "+ letter);
+      var findLetter = words[randWord].toLowerCase().search(letter);
 
-  var findLetter = words[randWord].toLowerCase().search(letter);
+      var wrongLetterCheck = letterBank.toLowerCase().search(letter);
 
-  //console.log(findLetter);
-  var wrongLetterCheck = letterBank.toLowerCase().search(letter);
+      if (wrongLetterCheck >= 0) {
+        //skip
+      } else {
 
-  if (wrongLetterCheck >= 0) {
-    //skip
-  } else {
+        //check to see if true
+        if (findLetter >= 0) {
 
-    //check to see if true
-    if (findLetter >= 0) {
+          //add to hidden hangman word
+          reWriteHangMan(letter);
 
-      //add to hidden hangman word
-      reWriteHangMan(letter);
+          //print new hangman array
+          console.log(combineArraySameLine(hangManViewWord));
 
-      //print new hangman array
-      hangeManDiv.innerHTML = combineArraySameLine(hangManViewWord);
+        }
 
-    }
+        //if incorrect
+        if (findLetter < 0) {
 
-    //if incorrect
-    if (findLetter < 0) {
+          //log incorrect letters
+          incorrectLetters = incorrectLetters + letter;
+          letterBank = letterBank + letter;
 
-      //log incorrect letters
-      incorrectLetters = incorrectLetters + letter;
-      letterBank = letterBank + letter;
+          //display incorrect letters guessed
+          console.log('incorrect letters: ' + combineArraySameLine(incorrectLetters));
 
-      //display incorrect letters guessed
-      correctGuessDiv.innerHTML = combineArraySameLine(incorrectLetters);
+          //decrease letters guessed
+          guessLeft = guessLeft - 1;
 
-      //decrease letters guessed
-      guessLeft = guessLeft - 1;
+          //print guesses left
+          console.log('guesses left: ' + guessLeft);
 
-      //print guesses left
-      guessCountDiv.innerHTML = guessLeft;
-
-    }
-  }
-
-
-
-  //Win
-  if (correctLetters.length === words[randWord].length) {
-
-    //add wins
-    wins++
-
-    //log win
-    var winCountDiv = document.getElementById("wins");
-    winCountDiv.innerHTML = wins;
-
-    //restart hangman
-    hangeManDiv.innerHTML = "";
-    randWord = Math.floor(Math.random() * words.length) + 0;
-    hideHangman();
-
-    //new word
-    hangeManDiv.innerHTML = combineArraySameLine(hangManViewWord);
-
-    //set letters to ""
-    correctLetters = "", incorrectLetters = "", letterBank = "";
-
-    //reset guesses
-    guessLeft = 15;
-    guessCountDiv.innerHTML = guessLeft;
-
-    correctGuessDiv.innerHTML = "_";
+        }
+      }
 
 
-  }
+      askUser()
+      //Win
+      if (correctLetters.length === words[randWord].length) {
 
-  //if loss
-  if (guessLeft === 0) {
+        //add wins
+        wins++
 
-    //restart
-    randWord = Math.floor(Math.random() * words.length) + 0;
-    hangeManDiv.innerHTML = "";
-    hideHangman();
+        //log win
+        var winCountDiv = document.getElementById("wins");
+        winCountDiv.innerHTML = wins;
 
-    //new word
-    hangeManDiv.innerHTML = combineArraySameLine(hangManViewWord);
+        //restart hangman
+        hangeManDiv.innerHTML = "";
+        randWord = Math.floor(Math.random() * words.length) + 0;
+        hideHangman();
 
-    //set letters to ""
-    correctLetters = "", incorrectLetters = "", letterBank = "";
+        //new word
+        hangeManDiv.innerHTML = combineArraySameLine(hangManViewWord);
 
-    //reset letters guessed
-    guessLeft = 15;
-    guessCountDiv.innerHTML = guessLeft;
+        //set letters to ""
+        correctLetters = "", incorrectLetters = "", letterBank = "";
 
-    correctGuessDiv.innerHTML = "_";
-  }
+        //reset guesses
+        guessLeft = 15;
+        guessCountDiv.innerHTML = guessLeft;
 
-  console.log(words[randWord])
+        correctGuessDiv.innerHTML = "_";
 
+
+      }
+
+      //if loss
+      if (guessLeft === 0) {
+
+        //restart
+        randWord = Math.floor(Math.random() * words.length) + 0;
+        hangeManDiv.innerHTML = "";
+        hideHangman();
+
+        //new word
+        hangeManDiv.innerHTML = combineArraySameLine(hangManViewWord);
+
+        //set letters to ""
+        correctLetters = "", incorrectLetters = "", letterBank = "";
+
+        //reset letters guessed
+        guessLeft = 15;
+        guessCountDiv.innerHTML = guessLeft;
+
+        correctGuessDiv.innerHTML = "_";
+      }
+
+      console.log(words[randWord])
+
+    });
 }
+
+askUser()
