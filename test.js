@@ -45,6 +45,7 @@
 var inquirer = require("inquirer");
 
 // Created a series of questions
+function askUser () {
 inquirer.prompt([
 
   {

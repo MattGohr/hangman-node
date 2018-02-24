@@ -1,4 +1,4 @@
-# Advanced JavaScript Assignment: Constructor Hangman
+ # Advanced JavaScript Assignment: Constructor Hangman
 
 ### Overview
 
