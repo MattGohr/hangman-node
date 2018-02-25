@@ -3,6 +3,7 @@ var inquirer = require('inquirer');
 var clear = require('clear');
 
 var prompt = inquirer.createPromptModule();
+
 //
 //create player array: you can add as many words to the list as you want.
 var words = ["dhalsim", "ryu", "guile", "akuma", "sagat"];
@@ -13,6 +14,7 @@ var incorrectLetters = "",
   letterBank = "";
 var wins = 0,
   losses = 0;
+var wone = false;
 
 function finder(searchingFor, searchingIn) {
   var checker = searchingFor.indexOf(searchingIn);
@@ -28,9 +30,22 @@ function playAgain() {
   inquirer.prompt([{
     type: "confirm",
     message: "Want to play again (the answer is yes!)",
-    name: "wantToLeave"
+    name: "wantToStay"
   }]).then(function(response) {
-      console.log(response);
+
+    if (response.wantToStay === true) {
+      guessLeft = 15;
+      incorrectLetters = "";
+      correctLetters = "";
+      letterBank = "";
+      wone = false;
+      word = new Word(words[Math.floor(Math.random() * words.length) + 0]);
+      clear();
+      askUser();
+    }else {
+      console.log(`GoodBye!!`);
+    }
+
   })
 }
 
@@ -42,16 +57,13 @@ function askUser() {
     name: "letter"
   }, ]).then(function(response) {
     clear();
-    playAgain()
 
     // Captures the key press, converts it to lowercase, and saves it to a variable.
     var letter = response.letter.toLowerCase();
     var previouslyChoosen = finder(letterBank, letter);
     var foundLetter = finder(word.word, letter);
 
-    // // console.log(`letterBank: ${letterBank}`);
-    // console.log(`letterBankCheck: ${letterBankCheck}`);
-    // console.log(`findLetter: ${findLetter}`);
+
 
     if (previouslyChoosen === false) {
 
@@ -60,7 +72,6 @@ function askUser() {
         correctLetters = correctLetters + letter;
         letterBank = letterBank + letter;
 
-        //add to hidden hangman word
         word.compare(letter);
 
       }
@@ -71,7 +82,6 @@ function askUser() {
         letterBank = letterBank + letter;
         guessLeft = guessLeft - 1;
 
-
       }
     }
 
@@ -79,11 +89,9 @@ function askUser() {
     //search for _ to see if word is hidden.
     if (word.isVisible()) {
 
-      //add wins
       wins++
       console.log(`Congrats you've wone!`);
-
-
+      wone = true;
     }
 
     //if loss
@@ -99,8 +107,12 @@ function askUser() {
     console.log(`wins: ${wins}`);
     console.log(`losses: ${losses}`);
     console.log(word.renderWord());
-    askUser();
 
+    if (!wone) {
+      askUser();
+    } else {
+      playAgain()
+    }
 
   });
 }
