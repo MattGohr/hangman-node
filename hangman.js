@@ -24,6 +24,16 @@ function finder(searchingFor, searchingIn) {
   }
 }
 
+function playAgain() {
+  inquirer.prompt([{
+    type: "confirm",
+    message: "Want to play again (the answer is yes!)",
+    name: "wantToLeave"
+  }]).then(function(response) {
+      console.log(response);
+  })
+}
+
 //questions and logic  -------------------------------------------------------------------
 function askUser() {
   inquirer.prompt([{
@@ -32,6 +42,7 @@ function askUser() {
     name: "letter"
   }, ]).then(function(response) {
     clear();
+    playAgain()
 
     // Captures the key press, converts it to lowercase, and saves it to a variable.
     var letter = response.letter.toLowerCase();
@@ -60,13 +71,10 @@ function askUser() {
         letterBank = letterBank + letter;
         guessLeft = guessLeft - 1;
 
-        console.log('incorrect letters: ' + incorrectLetters);
-        console.log('guesses left: ' + guessLeft);
 
       }
     }
 
-    console.log(` correct letter len: ${correctLetters.length}\n word len: ${word.word.length}`);
     //Win
     //search for _ to see if word is hidden.
     if (word.isVisible()) {
@@ -74,8 +82,7 @@ function askUser() {
       //add wins
       wins++
       console.log(`Congrats you've wone!`);
-      console.log(`wins: ${wins}`);
-      console.log(`losses: ${losses}`);
+
 
     }
 
@@ -84,10 +91,13 @@ function askUser() {
 
       losses++
       console.log(`Congrats You've Lost! \nBetter Luck Next Time!`);
-      console.log(`wins: ${wins}`);
-      console.log(`losses: ${losses}`);
 
     }
+
+    console.log(`Letters guessed: ${letterBank}`);
+    console.log(`Guesses left: ${guessLeft}`);
+    console.log(`wins: ${wins}`);
+    console.log(`losses: ${losses}`);
     console.log(word.renderWord());
     askUser();
 
