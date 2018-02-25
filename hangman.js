@@ -1,5 +1,6 @@
 var Word = require('./word');
 var inquirer = require('inquirer');
+var clear = require('clear');
 
 var prompt = inquirer.createPromptModule();
 //
@@ -30,7 +31,7 @@ function askUser() {
     message: "Guess a letter:",
     name: "letter"
   }, ]).then(function(response) {
-
+    clear();
 
     // Captures the key press, converts it to lowercase, and saves it to a variable.
     var letter = response.letter.toLowerCase();
@@ -68,7 +69,7 @@ function askUser() {
     console.log(` correct letter len: ${correctLetters.length}\n word len: ${word.word.length}`);
     //Win
     //search for _ to see if word is hidden.
-    if (correctLetters.length === word.word.length) {
+    if (word.isVisible()) {
 
       //add wins
       wins++

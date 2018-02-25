@@ -27,6 +27,17 @@ function Word(word) {
 
     return letters.join(' ');
 }
+  this.isVisible = function () {
+    var visible = true;
+    for (var i = 0; i < this.letterArray.length; i++) {
+        var letter = this.letterArray[i];
+        // console.log(`${letter.renderLetter()}`);
+        if (letter.renderLetter() === '_') {
+          var visible = false;
+        }
+    }
+    return visible;
+  }
 }
 
 module.exports = Word;
