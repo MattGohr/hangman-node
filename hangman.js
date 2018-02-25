@@ -2,7 +2,7 @@ var Word = require('./word');
 var inquirer = require('inquirer');
 
 var prompt = inquirer.createPromptModule();
-
+//
 //create player array: you can add as many words to the list as you want.
 var words = ["dhalsim", "ryu", "guile", "akuma", "sagat"];
 var word = new Word(words[Math.floor(Math.random() * words.length) + 0]);
